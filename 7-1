@@ -1,0 +1,137 @@
+#include <iostream>
+#include <math.h>
+using namespace std;
+
+
+class Sorted_prime
+{
+  /*
+   *Default constructor and a user defined constructor.
+   */
+public:
+  Sorted_prime (){val=0;next=NULL;}
+  Sorted_prime(int n):val(n),next(NULL){}
+  Sorted_prime(int n,Sorted_prime* _next):val(n),next(_next){}
+  /*a static method to check if a value is a prime number.*/
+  static bool Is_prime(int);  
+  /*insert a new node and the linked list must maintained as sorted order.The head is the smallest*/
+  bool insert(int);
+  /*return the pointer to it's next node*/
+  Sorted_prime *Get_next(); 
+  /*output the list elements */
+  void Print_out();
+  /*clear memory after the prime linked list is no longer being used.*/
+   ~Sorted_prime();
+private:
+  int val;// element value
+  Sorted_prime *next;//sorted as i linked list ,each contains one element and one pointer to it's next node.
+  
+};
+Sorted_prime* head=NULL;//the global pointer as the first pointer .
+
+
+
+/*--------Sorted_prime complement---------------*/
+bool Sorted_prime::Is_prime(int n)
+{
+  if(n<-10000||n>10000)//check if the numder locates in the right range.
+	return false;
+  if(n<2) // the smallest prime numer is 2.
+    return false;
+  int tmp=sqrt(n);
+  int i;
+  for(i=2;i<=tmp;i++)
+  {
+    if(n%i==0)
+	  return false;
+  }
+  return true;
+}
+
+Sorted_prime* Sorted_prime::Get_next()
+{
+  return next;
+}
+
+bool Sorted_prime::insert(int n)
+{
+	Sorted_prime * prime=new Sorted_prime(n);
+	if(head==NULL)
+	{
+      head=prime;
+	  return true;
+	}
+	if(prime->val<head->val)
+	{
+      prime->next=head;
+	  head=prime;
+	  return true;
+	}
+	if(prime->val==head->val)
+	{
+	  return true;
+	}
+
+	else
+	{
+      Sorted_prime* pcur;
+	  Sorted_prime * pre;
+	  pre=head;
+	  for(pcur=head->next;pcur!=NULL;pcur=pcur->next,pre=pre->next)
+	  {
+		if(prime->val==pcur->val)
+		  return true;
+        if(prime->val<pcur->val)
+		{
+          pre->next=prime;
+		  prime->next=pcur;
+		  return true;
+		}
+	  }
+	  //insert as the last one
+	  pre->next=prime;
+	}
+   return true;
+}
+
+void Sorted_prime::Print_out()
+{
+  if(head==NULL)
+	return;
+  Sorted_prime* q;
+  for(q=head;q->next!=NULL;q=q->next)
+	cout<<q->val<<' ';
+  //output the last one
+  cout<<q->val;
+}
+
+Sorted_prime::~Sorted_prime()
+{
+  Sorted_prime* q;
+  Sorted_prime* qnext;
+  for(q=head;q->next!=NULL;q=q->next)
+  {
+     qnext=q->next;
+	 delete q;
+	 q=qnext->next;
+  }
+  head=NULL;
+}
+
+/*test program*/
+int main()
+{
+ int num;
+ Sorted_prime *qprime=new Sorted_prime();
+Begin:
+ if( cin>>num);
+ {
+  if(Sorted_prime::Is_prime(num))
+  {
+   qprime->insert(num);
+   goto Begin;
+  }
+ }
+ qprime->Print_out();
+ return 0;
+}
